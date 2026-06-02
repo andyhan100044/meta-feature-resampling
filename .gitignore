@@ -33,9 +33,15 @@ env/
 *.swo
 *~
 
-# Data and Results
-data/
-results/
+# Data and Results (root level only)
+/data/
+/results/
+/MFPT_data/
+
+# But allow src/data (contains parsing code)
+/src/data/
+!/src/data/
+/src/data/convert_mfpt.py
 logs/
 *.log
 
