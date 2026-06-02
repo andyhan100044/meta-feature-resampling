@@ -305,9 +305,10 @@ Future work will explore finer-grained feature analysis, larger-scale datasets, 
 The source code and processed experimental data that support the findings of this paper are available at \url{https://github.com/andyhan100044/meta-feature-resampling}.
 
 \begin{itemize}
-    \item \textbf{Code:} \texttt{joint\_recommender\_v2.py} (main experiment), \texttt{plot\_coupling\_heatmap.py} (visualization), \texttt{analyze\_generalization.py} (analysis)
+    \item \textbf{Code:} \texttt{joint\_recommender\_v2.py} (main experiment), \texttt{plot\_coupling\_heatmap.py} (visualization), \texttt{analyze\_generalization.py} (analysis), \texttt{regenerate\_cwru\_cache.py} (feature extraction)
     \item \textbf{CWRU Dataset:} Case Western Reserve University Bearing Dataset (\url{https://engineering.case.edu/benchmarking/bearing})
     \item \textbf{MFPT Dataset:} Machinery Failure Prevention Technology Dataset (\url{https://mfpt.org/datasets/})
+    \item \textbf{Feature Cache:} Pre-extracted features (\texttt{cache/cwru\_multiclass\_features.npz}, \texttt{cache/mfpt\_multiclass\_features.npz}) are included in the repository for immediate reproduction. To re-extract from raw data, run \texttt{python scripts/regenerate\_cwru\_cache.py}.
     \item \textbf{Raw Results:} \texttt{results/} directory contains cached coupling matrices and experimental results in \texttt{.pkl} format
 \end{itemize}
 
