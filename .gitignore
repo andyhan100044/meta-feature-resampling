@@ -37,6 +37,7 @@ env/
 /data/
 /results/
 /MFPT_data/
+/cache/
 /models/
 
 # But allow src/data (contains parsing code)

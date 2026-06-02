@@ -1,12 +1,53 @@
 """
-复杂度特征提取
+复杂度特征提取 - 优化版本
 包括: 样本熵、排列熵
 """
 import numpy as np
 import math
+from numpy.lib.stride_tricks import as_strided
+
+
+def permutation_entropy(signal, m=3):
+    """排列熵 (Permutation Entropy) - 完全向量化实现
+
+    Args:
+        signal: 输入信号
+        m: 模式长度
+
+    Returns:
+        float: 排列熵值 (归一化)
+    """
+    n = len(signal)
+    if n < m + 1:
+        return 0.0
+
+    # 用stride_tricks避免Python循环，提取所有m维窗口：(n-m+1, m)
+    windows = as_strided(signal, shape=(n - m + 1, m), strides=(signal.strides[0], signal.strides[0]))
+    windows = windows.copy()  # 确保连续内存
+
+    # 计算每个窗口的排列编码：排序索引的整数编码
+    order = np.argsort(windows, axis=1)
+    ranks = np.argsort(order, axis=1)
+    codes = np.dot(ranks, (m ** np.arange(m))).astype(np.int64)
+
+    # 统计各排列出现次数
+    unique, counts = np.unique(codes, return_counts=True)
+    total = len(codes)
+
+    # 计算熵
+    probs = counts / total
+    pe = -np.sum(probs * np.log(probs + 1e-10))
+
+    # 归一化
+    max_pe = np.log(math.factorial(m))
+    if max_pe == 0:
+        return 0.0
+
+    return pe / max_pe
+
 
 def sample_entropy(signal, m=2, r=0.2):
-    """样本熵 (Sample Entropy)
+    """样本熵 (Sample Entropy) - 向量化实现
 
     Args:
         signal: 输入信号
@@ -24,64 +65,28 @@ def sample_entropy(signal, m=2, r=0.2):
     if r_threshold == 0:
         return 0.0
 
-    # 构建m维模式
-    patterns_m = np.array([signal[i:i+m] for i in range(n-m)])
-    patterns_m1 = np.array([signal[i:i+m+1] for i in range(n-m)])
-
-    def _max_dist(xi, xj):
-        return np.max(np.abs(xi - xj))
-
     def _count_matches(patterns):
-        count = 0
-        for i in range(len(patterns)):
-            for j in range(len(patterns)):
-                if i != j and _max_dist(patterns[i], patterns[j]) <= r_threshold:
-                    count += 1
-        return count
+        """统计匹配对数 - 向量化"""
+        n_p = len(patterns)
+        diff = patterns[:, np.newaxis, :] - patterns[np.newaxis, :, :]
+        max_dists = np.max(np.abs(diff), axis=2)
+        np.fill_diagonal(max_dists, np.inf)
+        matches = np.sum(max_dists <= r_threshold, axis=1)
+        return np.sum(matches)
 
-    # 计算A和B
-    A = _count_matches(patterns_m1) / ((n - m - 1) * (n - m - 2) + 1e-10)
-    B = _count_matches(patterns_m) / ((n - m - 1) * (n - m - 1) + 1e-10)
+    # 构建模式矩阵
+    patterns_m = as_strided(signal, shape=(n - m, m), strides=(signal.strides[0], signal.strides[0])).copy()
+    patterns_m1 = as_strided(signal, shape=(n - m - 1, m + 1), strides=(signal.strides[0], signal.strides[0])).copy()
+
+    A = _count_matches(patterns_m1)
+    B = _count_matches(patterns_m)
+
+    n_m1 = n - m - 1
+    n_m = n - m
+    A = A / (n_m1 * (n_m1 - 1) + 1e-10)
+    B = B / (n_m * (n_m - 1) + 1e-10)
 
     if A == 0 or B == 0:
         return 0.0
 
     return -np.log(A / B + 1e-10)
-
-def permutation_entropy(signal, m=3):
-    """排列熵 (Permutation Entropy)
-
-    Args:
-        signal: 输入信号
-        m: 模式长度
-
-    Returns:
-        float: 排列熵值 (归一化)
-    """
-    n = len(signal)
-    if n < m + 1:
-        return 0.0
-
-    # 构建排列模式
-    patterns = [np.argsort(signal[i:i+m]) for i in range(n-m)]
-
-    # 统计各模式出现次数
-    counts = {}
-    for p in patterns:
-        key = tuple(p)
-        counts[key] = counts.get(key, 0) + 1
-
-    # 计算熵
-    total = len(patterns)
-    pe = 0.0
-    for count in counts.values():
-        p = count / total
-        if p > 0:
-            pe -= p * np.log(p)
-
-    # 归一化
-    max_pe = np.log(math.factorial(m))
-    if max_pe == 0:
-        return 0.0
-
-    return pe / max_pe
