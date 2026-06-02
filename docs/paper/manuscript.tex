@@ -20,7 +20,7 @@
 \maketitle
 
 \begin{abstract}
-In industrial fault diagnosis, the scarcity of fault samples presents a significant challenge for training effective machine learning models. While data augmentation techniques have been widely adopted to address class imbalance, existing approaches rely on fixed strategies that fail to adapt to the underlying signal characteristics. This paper proposes a \emph{joint optimization} framework that simultaneously selects optimal feature subsets and resampling strategies based on signal-specific statistical features. Through comprehensive analysis of the strategy-feature coupling matrix, we discover that entropy features (sample entropy, permutation entropy) consistently outperform full feature sets across all strategies, achieving 15-21\% improvement in F1-macro. A lightweight decision tree recommendation engine maps signal meta-features to optimal (strategy, feature-set) pairs. The proposed method achieves comparable performance to the oracle while being 100,000x faster than Auto-sklearn, and demonstrates generalization capability in cross-dataset validation.
+In industrial fault diagnosis, the scarcity of fault samples presents a significant challenge for training effective machine learning models. While data augmentation techniques have been widely adopted to address class imbalance, existing approaches rely on fixed strategies that fail to adapt to the underlying signal characteristics. This paper proposes a \emph{joint optimization} framework that simultaneously selects optimal feature subsets and resampling strategies based on signal-specific statistical features. Through comprehensive analysis of the strategy-feature coupling matrix, we discover that entropy features (sample entropy, permutation entropy) consistently outperform full feature sets across all strategies, achieving 1-18\% improvement in F1-macro depending on the imbalance ratio. A lightweight decision tree recommendation engine maps signal meta-features to optimal (strategy, feature-set) pairs. The proposed method achieves comparable performance to the oracle while being 100,000x faster than Auto-sklearn, and demonstrates generalization capability in cross-dataset validation.
 \end{abstract}
 
 \section{Introduction}
@@ -150,20 +150,20 @@ Experiments are conducted on the Case Western Reserve University (CWRU) bearing 
 \begin{tabular}{|l|c|c|c|c|c|c|c|}
 \toprule
 Strategy & time & freq & entropy & time+freq & time+entropy & freq+entropy & all \\ \midrule
-SMOTE & 0.51 & 0.66 & \textbf{0.86} & 0.65 & 0.68 & 0.65 & 0.65 \\
-Borderline-SMOTE & 0.55 & 0.63 & \textbf{0.80} & 0.63 & 0.73 & 0.63 & 0.63 \\
-ADASYN & 0.51 & 0.69 & \textbf{0.85} & 0.71 & 0.70 & 0.65 & 0.71 \\
-RUS & 0.47 & 0.68 & \textbf{0.75} & 0.68 & 0.55 & 0.68 & 0.68 \\
-SMOTETomek & 0.51 & 0.66 & \textbf{0.86} & 0.65 & 0.68 & 0.66 & 0.65 \\
+SMOTE & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
+Borderline-SMOTE & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
+ADASYN & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
+RUS & 0.43 & 0.54 & \textbf{0.63} & 0.54 & 0.58 & 0.56 & 0.54 \\
+SMOTETomek & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Table~\ref{tab:matrix} shows the coupling matrix at IR=10. Key observations:
 \begin{itemize}
-    \item \textbf{Entropy features dominate}: All strategies achieve their best performance with entropy features (highlighted in bold). Using all features degrades performance by up to 35\% (SMOTE: 0.86 vs 0.65).
-    \item \textbf{Borderline-SMOTE is fragile}: With non-entropy features, Borderline-SMOTE performs poorly (0.51-0.63), but recovers with entropy features (0.80).
-    \item \textbf{ADASYN is robust}: ADASYN maintains reasonable performance across feature sets (0.51-0.85).
+    \item \textbf{Entropy features dominate}: Most strategies achieve their best performance with entropy features (highlighted in bold). Using all features degrades performance by up to 12\% (SMOTE: 0.64 vs 0.57).
+    \item \textbf{ADASYN is robust}: ADASYN maintains consistent performance across feature sets (0.47-0.64).
+    \item \textbf{Strategy choice matters less than feature choice}: At IR=10, the choice between SMOTE/SMOTETomek/BorderlineSMOTE yields similar results when combined with entropy features.
 \end{itemize}
 
 \subsection{CWRU Local Results}
@@ -175,21 +175,21 @@ Table~\ref{tab:matrix} shows the coupling matrix at IR=10. Key observations:
 \begin{tabular}{|l|c|c|c|c|}
 \toprule
 Method & IR=3 & IR=5 & IR=10 & Avg. Gain \\ \midrule
-Fixed-SMOTE (all features) & 0.655 & 0.655 & 0.646 & -- \\
-Fixed-ADASYN (all features) & 0.647 & 0.663 & 0.707 & -- \\
-Fixed-RUS (all features) & 0.647 & 0.667 & 0.680 & -- \\
-Fixed-Borderline-SMOTE (all features) & 0.463 & 0.659 & 0.625 & -- \\
-Fixed-SMOTETomek (all features) & 0.655 & 0.655 & 0.646 & -- \\
+Fixed-SMOTE (all features) & 0.429 & 0.550 & 0.569 & -- \\
+Fixed-ADASYN (all features) & 0.507 & 0.550 & 0.569 & -- \\
+Fixed-RUS (all features) & 0.432 & 0.550 & 0.569 & -- \\
+Fixed-Borderline-SMOTE (all features) & 0.432 & 0.550 & 0.569 & -- \\
+Fixed-SMOTETomek (all features) & 0.451 & 0.550 & 0.569 & -- \\
 \midrule
-\textbf{EntropyBest (oracle)} & \textbf{0.860} & \textbf{0.880} & \textbf{0.858} & -- \\
-\textbf{OurJoint (recommender)} & \textbf{0.857} & \textbf{0.880} & \textbf{0.858} & -- \\
+\textbf{EntropyBest (oracle)} & \textbf{0.708} & \textbf{0.561} & \textbf{0.635} & -- \\
+\textbf{OurJoint (recommender)} & \textbf{0.683} & \textbf{0.561} & \textbf{0.635} & -- \\
 \midrule
-Gain vs Best Fixed & +20.2\% & +21.3\% & +15.1\% & +18.9\% \\
+Gain vs Best Fixed & +17.7\% & +1.1\% & +6.6\% & +8.5\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Our joint recommender reaches 97-100\% of the oracle performance while outperforming fixed strategies by 15-21\%.
+Our joint recommender reaches 96-100\% of the oracle performance while outperforming fixed strategies by 1-18\% depending on the IR ratio.
 
 \subsection{Ablation Study: Joint vs. Two-Stage Optimization}
 To validate the necessity of joint optimization, we compare it against a two-stage approach: (Stage 1) select the best strategy using all features, then (Stage 2) select the best feature set for the chosen strategy.
@@ -201,17 +201,17 @@ To validate the necessity of joint optimization, we compare it against a two-sta
 \begin{tabular}{|l|c|c|c|c|}
 \toprule
 Method & Strategy & Feature Set & F1-macro & vs. Joint \\ \midrule
-Stage 1 (all features) & ADASYN & all & 0.707 & -- \\
-Stage 2 (fix ADASYN) & ADASYN & entropy & 0.849 & -1.0\% \\
+Stage 1 (all features) & SMOTE & all & 0.569 & -- \\
+Stage 2 (fix SMOTE) & SMOTE & entropy & 0.635 & 0.0\% \\
 \midrule
-\textbf{Joint (ours)} & \textbf{SMOTE} & \textbf{entropy} & \textbf{0.858} & \textbf{--} \\
+\textbf{Joint (ours)} & \textbf{SMOTE} & \textbf{entropy} & \textbf{0.635} & \textbf{--} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-At IR=10, Stage 1 selects ADASYN as best with all features (0.707). Stage 2 then refines to entropy (0.849). However, the joint approach discovers that SMOTE+entropy (0.858) outperforms ADASYN+entropy (0.849), yielding +1.1\% additional gain over the two-stage result.
+At IR=10, both Stage 1 and Joint select SMOTE, but Stage 1 uses all features (0.569) while Joint correctly selects entropy features (0.635), achieving +6.6\% improvement.
 
-The gap is more dramatic at lower IR ratios:
+The gap is more significant at lower IR ratios:
 
 \begin{table}[htbp]
 \centering
@@ -221,14 +221,14 @@ The gap is more dramatic at lower IR ratios:
 \toprule
  & \multicolumn{3}{c|}{Two-Stage} & \multicolumn{2}{c|}{Joint} & \multicolumn{2}{c}{} \\ \cmidrule{2-6}
 IR & Stage1 (all) & F1 (all) & Stage2 (entropy) & F1 & Strategy & F1 & Gain \\ \midrule
-IR=3 & SMOTE & 0.655 & SMOTE & 0.647 & Borderline-SMOTE & 0.860 & +32.9\% \\
-IR=5 & RUS & 0.667 & RUS & 0.843 & SMOTE & 0.880 & +4.4\% \\
-IR=10 & ADASYN & 0.707 & ADASYN & 0.849 & SMOTE & 0.858 & +1.1\% \\
+IR=3 & ADASYN & 0.507 & ADASYN & 0.505 & SMOTETomek & 0.683 & +35.3\% \\
+IR=5 & SMOTE & 0.550 & SMOTE & 0.561 & SMOTE & 0.561 & +2.0\% \\
+IR=10 & SMOTE & 0.569 & SMOTE & 0.635 & SMOTE & 0.635 & +6.6\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-At IR=3, the two-stage approach selects SMOTE with all features (0.655), then applies entropy to SMOTE (0.647) --- a degradation. The joint approach correctly identifies Borderline-SMOTE+entropy (0.860), yielding a \textbf{+32.9\%} improvement. This demonstrates that when strategy-feature interactions are strong, two-stage optimization can select a suboptimal strategy at Stage 1 that cannot be rescued by Stage 2.
+At IR=3, the two-stage approach selects ADASYN with all features (0.507), and Stage 2 refines to entropy (0.505) --- a slight degradation. The joint approach correctly identifies SMOTETomek+entropy (0.683), yielding a \textbf{+35.3\%} improvement over the two-stage result. This demonstrates that when strategy-feature interactions are strong, two-stage optimization can select a suboptimal strategy at Stage 1 that cannot be rescued by Stage 2.
 
 \subsection{Cross-Dataset Validation (CWRU $\rightarrow$ MFPT)}
 
@@ -239,14 +239,14 @@ At IR=3, the two-stage approach selects SMOTE with all features (0.655), then ap
 \begin{tabular}{|l|c|c|c|}
 \toprule
 IR & OurJoint(MFPT) & EntropyBest(MFPT) & Gain \\ \midrule
-IR=3 & 0.827 & 0.807 & \textbf{+2.0\%} \\
+IR=3 & 0.828 & 0.829 & -0.1\% \\
 IR=5 & 0.828 & 0.830 & -0.2\% \\
 IR=10 & 0.828 & 0.830 & -0.2\% \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-In cross-dataset validation, our method achieves comparable or better performance than the EntropyBest baseline. At IR=3, the joint recommender outperforms by 2.0\%, demonstrating its ability to generalize across datasets.
+In cross-dataset validation, our method achieves comparable performance to the EntropyBest baseline across all IR ratios. The consistency of F1$\approx$0.83 on MFPT demonstrates that the recommended (strategy, feature-set) pairs generalize across datasets, even when the optimal strategy differs between CWRU and MFPT.
 
 \subsection{Efficiency Analysis}
 
