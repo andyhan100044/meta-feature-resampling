@@ -61,6 +61,9 @@ class ExperimentPipeline:
 
         fault_dir = os.path.join(self.data_dir, "12k_Drive_End_Bearing_Fault_Data")
 
+        # 故障类型到标签的映射
+        FAULT_LABELS = {'B': 1, 'IR': 2, 'OR': 3}
+
         # 加载故障数据
         if fault_types:
             for fault_type in fault_types:
@@ -69,17 +72,22 @@ class ExperimentPipeline:
                     if not os.path.exists(size_dir):
                         continue
 
-                    for filename in os.listdir(size_dir):
-                        if not filename.endswith('.mat'):
-                            continue
+                    # 遍历目录找到所有.mat文件（支持OR的特殊子目录结构）
+                    mat_files = []
+                    for root, dirs, files in os.walk(size_dir):
+                        for filename in files:
+                            if filename.endswith('.mat'):
+                                mat_files.append(os.path.join(root, filename))
+
+                    for mat_path in mat_files:
                         # 检查工况
+                        filename = os.path.basename(mat_path)
                         parts = filename.replace('.mat', '').split('_')
                         workload_idx = int(parts[-1])
                         expected_idx = {'0HP': 0, '1HP': 1, '2HP': 2, '3HP': 3}[workload]
                         if workload_idx != expected_idx:
                             continue
 
-                        mat_path = os.path.join(size_dir, filename)
                         signal = parse_cwru_mat(mat_path)
                         if signal is None:
                             continue
@@ -88,7 +96,7 @@ class ExperimentPipeline:
                         for frame in frames:
                             features = self.extractor.extract(frame)
                             X_list.append(self.extractor.to_vector(features))
-                            y_list.append(1)  # 故障
+                            y_list.append(FAULT_LABELS[fault_type])  # B=1, IR=2, OR=3
 
         # 加载正常数据
         if normal_data:

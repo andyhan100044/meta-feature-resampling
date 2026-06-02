@@ -37,7 +37,6 @@ env/
 /data/
 /results/
 /MFPT_data/
-/cache/
 /models/
 
 # Datasets (large files, not code)
@@ -48,8 +47,9 @@ env/
 # MFPT .mat files - download from https://mfpt.org/datasets/
 /MFPT_data/
 
-# But keep extracted features (small .npz files) for reproducibility
+# Cache directory - ignore all except .npz feature files
 /cache/
+/cache/*
 !/cache/*.npz
 
 # Sensitive files
