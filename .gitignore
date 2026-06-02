@@ -33,17 +33,25 @@ env/
 *.swo
 *~
 
-# Data and Results (root level only)
+# Data and Results
 /data/
 /results/
 /MFPT_data/
 /cache/
 /models/
 
-# But allow src/data (contains parsing code)
-/src/data/
-!/src/data/
-/src/data/convert_mfpt.py
+# Datasets (large files, not code)
+/CWRU-dataset/
+!CWRU-dataset/README.md  # Keep README only
+
+# Sensitive files
+githubapi.txt
+*.txt  # Chinese naming files
+
+# Claude
+/.claude/
+
+# Logs
 logs/
 *.log
 
