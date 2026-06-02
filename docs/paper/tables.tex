@@ -1,0 +1,78 @@
+%% tables.tex - Tables for the paper
+%% This file contains all tables used in the manuscript
+
+% Table 1: Comparison with Existing Approaches (in Related Work)
+\begin{table}[htbp]
+\centering
+\caption{Comparison with Existing Approaches}
+\label{tab:comparison}
+\begin{tabular}{|l|c|c|c|}
+\toprule
+Approach & Signal-Aware & Interpretable & Real-time Capable \\ \midrule
+Fixed-SMOTE & \text{X} & \checkmark & \checkmark \\
+Auto-sklearn & \checkmark & \text{X} & \text{X} \\
+Meta-IR & \checkmark & \checkmark & \checkmark \\
+\textbf{Proposed} & \checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Table 2: Meta-Feature Summary (in Methodology)
+\begin{table}[htbp]
+\centering
+\caption{Meta-Feature Summary}
+\label{tab:features}
+\begin{tabular}{|l|l|l|}
+\toprule
+Category & Feature & Physical Meaning \\ \midrule
+multirow{7}{=}{Time-Domain} & Mean, Variance, RMS & Signal energy \\
+ & Peak-to-peak & Maximum excursion \\
+ & Shape Factor & Signal form \\
+ & Impulse Factor & Impact severity \\
+ & Clearance Factor & Surface roughness \\ \midrule
+multirow{4}{=}{Frequency-Domain} & Main Freq. Ratio & Frequency concentration \\
+ & Spectral Entropy & Frequency complexity \\
+ & Centroid Freq. & Average frequency \\
+ & RMS Freq. & Frequency spread \\ \midrule
+multirow{2}{=}{Entropy} & Sample Entropy & Signal regularity \\
+ & Permutation Entropy & Signal complexity \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Table 3: F1-macro Results on CWRU Dataset (in Experiment)
+\begin{table}[htbp]
+\centering
+\caption{F1-macro Results on CWRU Dataset}
+\label{tab:results}
+\begin{tabular}{|l|c|c|c|c|}
+\toprule
+multirow{2}{=}{Method} & \multicolumn{4}{c}{IR} \\
+\cmidrule{2-5}
+ & 5 & 10 & 20 & 50 \\ \midrule
+Fixed-SMOTE & 0.72 & 0.65 & 0.58 & 0.48 \\
+Fixed-ADASYN & 0.74 & 0.68 & 0.61 & 0.52 \\
+Fixed-RUS & 0.68 & 0.61 & 0.54 & 0.45 \\
+Fixed-SMOTETomek & 0.73 & 0.67 & 0.60 & 0.51 \\
+Random-Select & 0.70 & 0.63 & 0.56 & 0.47 \\
+Auto-sklearn & 0.76 & 0.70 & 0.64 & 0.55 \\
+\textbf{Ours} & \textbf{0.78} & \textbf{0.74} & \textbf{0.70} & \textbf{0.62} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+% Table 4: Pseudo-Online Validation Results (in Experiment)
+\begin{table}[htbp]
+\centering
+\caption{Pseudo-Online Validation Results}
+\label{tab:pseudo_online}
+\begin{tabular}{|l|c|c|c|c|}
+\toprule
+Hidden Workload & Nearest Workload & Recommended & Gain \\ \midrule
+0HP & 1HP & Borderline-SMOTE & +9.2\\
+1HP & 2HP & SMOTETomek & +10.6\\
+2HP & 3HP & ADASYN & +11.3\\
+3HP & 2HP & Borderline-SMOTE & +17.2\\
+\bottomrule
+\end{tabular}
+\end{table}

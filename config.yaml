@@ -1,0 +1,35 @@
+dataset:
+  cwru_url: "https://engineering.case.edu/-bearing/databases/12k Drive End Bearing Fault Data"
+  mfpt_url: "https://mfpt.org/data-sets/"
+  data_dir: "data"
+  save_dir: "data/raw"
+
+signal:
+  frame_size: 1024
+  overlap_ratio: 0.5
+  window: "hanning"
+  sample_rates: [12000, 48000]
+
+resampling:
+  strategies:
+    - SMOTE
+    - BorderlineSMOTE
+    - ADASYN
+    - RandomUnderSampler
+    - SMOTETomek
+  k_neighbors: 5
+
+classifier:
+  type: SVM
+  kernel: rbf
+  C: 1.0
+  gamma: scale
+
+recommender:
+  max_depth: 5
+  criterion: gini
+
+experiment:
+  imbalance_ratios: [5, 10, 20, 50]
+  cv_folds: 5
+  random_seed: 42
