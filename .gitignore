@@ -41,8 +41,16 @@ env/
 /models/
 
 # Datasets (large files, not code)
+# CWRU .mat files - download from https://engineering.case.edu/benchmarking/bearing
 /CWRU-dataset/
 !CWRU-dataset/README.md  # Keep README only
+
+# MFPT .mat files - download from https://mfpt.org/datasets/
+/MFPT_data/
+
+# But keep extracted features (small .npz files) for reproducibility
+/cache/
+!/cache/*.npz
 
 # Sensitive files
 githubapi.txt
