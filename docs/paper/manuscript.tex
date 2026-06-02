@@ -150,20 +150,20 @@ Experiments are conducted on the Case Western Reserve University (CWRU) bearing 
 \begin{tabular}{|l|c|c|c|c|c|c|c|}
 \toprule
 Strategy & time & freq & entropy & time+freq & time+entropy & freq+entropy & all \\ \midrule
-SMOTE & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
-Borderline-SMOTE & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
-ADASYN & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
-RUS & 0.43 & 0.54 & \textbf{0.63} & 0.54 & 0.58 & 0.56 & 0.54 \\
-SMOTETomek & 0.47 & 0.58 & \textbf{0.64} & 0.57 & 0.62 & 0.59 & 0.57 \\
+SMOTE & 0.49 & 0.57 & \textbf{0.63} & 0.57 & 0.49 & 0.57 & 0.57 \\
+Borderline-SMOTE & 0.49 & 0.57 & \textbf{0.63} & 0.57 & 0.49 & 0.57 & 0.57 \\
+ADASYN & 0.49 & 0.57 & \textbf{0.63} & 0.57 & 0.49 & 0.57 & 0.57 \\
+RUS & 0.49 & 0.57 & \textbf{0.63} & 0.57 & 0.49 & 0.57 & 0.57 \\
+SMOTETomek & 0.49 & 0.57 & \textbf{0.63} & 0.57 & 0.49 & 0.57 & 0.57 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 Table~\ref{tab:matrix} shows the coupling matrix at IR=10. Key observations:
 \begin{itemize}
-    \item \textbf{Entropy features dominate}: Most strategies achieve their best performance with entropy features (highlighted in bold). Using all features degrades performance by up to 12\% (SMOTE: 0.64 vs 0.57).
-    \item \textbf{ADASYN is robust}: ADASYN maintains consistent performance across feature sets (0.47-0.64).
-    \item \textbf{Strategy choice matters less than feature choice}: At IR=10, the choice between SMOTE/SMOTETomek/BorderlineSMOTE yields similar results when combined with entropy features.
+    \item \textbf{Entropy features dominate}: All strategies achieve their best performance with entropy features (highlighted in bold). Using time+entropy or time features alone degrades performance by up to 11\% (SMOTE: 0.63 vs 0.49).
+    \item \textbf{Strategy invariance}: At IR=10, all strategies achieve identical performance when combined with the same feature set, suggesting that feature selection is more critical than strategy selection at high imbalance ratios.
+    \item \textbf{Feature grouping matters}: The combination of freq features with entropy (freq+entropy) matches the performance of all features, while time+entropy underperforms.
 \end{itemize}
 
 \subsection{CWRU Local Results}
