@@ -301,6 +301,16 @@ The joint recommendation engine, based on a lightweight decision tree, achieves 
 
 Future work will explore finer-grained feature analysis, larger-scale datasets, and online deployment with concept drift adaptation.
 
+\section*{Code and Data Availability}
+The source code and processed experimental data that support the findings of this paper are available at \url{https://github.com/andyhan100044/meta-feature-resampling}.
+
+\begin{itemize}
+    \item \textbf{Code:} \texttt{joint\_recommender\_v2.py} (main experiment), \texttt{plot\_coupling\_heatmap.py} (visualization), \texttt{analyze\_generalization.py} (analysis)
+    \item \textbf{CWRU Dataset:} Case Western Reserve University Bearing Dataset (\url{https://engineering.case.edu/benchmarking/bearing})
+    \item \textbf{MFPT Dataset:} Machinery Failure Prevention Technology Dataset (\url{https://mfpt.org/datasets/})
+    \item \textbf{Raw Results:} \texttt{results/} directory contains cached coupling matrices and experimental results in \texttt{.pkl} format
+\end{itemize}
+
 \bibliography{references}
 \bibliographystyle{plain}
 
