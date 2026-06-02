@@ -24,24 +24,13 @@ def load_config(config_path):
         return yaml.safe_load(f)
 
 def stage_data(config):
-    """数据下载阶段"""
+    """数据准备阶段"""
     print("\n" + "="*60)
-    print("Stage 1: 数据下载")
+    print("Stage 1: 数据准备")
     print("="*60)
-
-    from src.data.download_cwru import download_cwru
-    from src.data.download_mfpt import download_mfpt
-
-    data_dir = config['dataset']['data_dir']
-    os.makedirs(data_dir, exist_ok=True)
-
     print("\n[CWRU数据集]")
-    download_cwru(data_dir)
-
-    print("\n[MFPT数据集]")
-    download_mfpt(data_dir)
-
-    print("\n数据下载完成!")
+    print("CWRU数据集已本地存储在 CWRU-dataset/ 目录")
+    print("\n数据准备完成!")
 
 def stage_features(config):
     """特征提取阶段"""

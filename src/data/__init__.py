@@ -1,7 +1,6 @@
 """
 CWRU轴承数据集模块
 """
-from .download_cwru import download_cwru, CWRU_DATA_URLS
 from .parse_cwru import (
     parse_cwru_mat,
     create_frames,
@@ -13,8 +12,6 @@ from .parse_cwru import (
 )
 
 __all__ = [
-    'download_cwru',
-    'CWRU_DATA_URLS',
     'parse_cwru_mat',
     'create_frames',
     'load_cwru_data',
