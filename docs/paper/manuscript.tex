@@ -47,6 +47,8 @@ Existing approaches treat fault diagnosis as a flat multi-class classification p
 
 \textbf{Our key observation:} Entropy features (sample entropy, permutation entropy) achieve 100\% fault detection, but only 33\% fault type accuracy. This dramatic performance gap reveals a \emph{feature-task misalignment}: entropy features capture signal regularity (whether the signal is predictable or chaotic), which is sufficient for detecting fault \emph{presence}, but insufficient for distinguishing fault \emph{types}, which require frequency-domain signatures.
 
+\textbf{System-level motivation:} Beyond algorithmic considerations, industrial monitoring systems impose real-time constraints that reinforce feature-task alignment at the architecture level. Level 1 (fault detection) must respond within milliseconds to trigger immediate protective actions, requiring computationally simple features. Entropy features are fast to compute and ideal for this online setting. Level 2 (fault type classification) operates offline after a fault is detected, allowing for more complex frequency-domain analysis to determine the specific fault mechanism. This real-time/offline separation motivates feature-task alignment not merely as an algorithmic choice, but as a system design principle.
+
 This observation motivates our hierarchical framework with \emph{adaptive feature selection}:
 
 \begin{itemize}
@@ -133,17 +135,28 @@ We extract three categories of features from vibration signals:
 \centering
 \caption{Meta-Feature Summary}
 \label{tab:features}
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{|l|l|l|l|}
 \toprule
-Category & Feature & Physical Quantity \\ \midrule
-Time-Domain & RMS, Variance, Peak-to-peak & Signal energy and variation \\ \midrule
-Frequency-Domain & Main Freq. Ratio, Spectral Entropy & Frequency distribution characteristics \\ \midrule
-Entropy & Sample Entropy, Permutation Entropy & Signal regularity and complexity \\
+Category & Feature & Physical Quantity & Computational Cost \\ \midrule
+Time-Domain & RMS, Variance, Peak-to-peak & Signal energy and variation & Low \\ \midrule
+Frequency-Domain & Main Freq. Ratio, Spectral Entropy & Frequency distribution characteristics & Medium-High \\ \midrule
+Entropy & Sample Entropy, Permutation Entropy & Signal regularity and complexity & Low \\ \midrule
 \bottomrule
 \end{tabular}
 \end{table}
 
-The feature categories measure fundamentally different signal properties: time-domain features capture energy, frequency-domain features capture spectral composition, and entropy features capture regularity.
+The feature categories measure fundamentally different signal properties: time-domain features capture energy, frequency-domain features capture spectral composition, and entropy features capture regularity. Notably, entropy features achieve low computational cost while maintaining high fault detection performance, making them suitable for real-time online monitoring.
+
+\subsection{Real-Time vs. Offline Analysis: System-Level Constraints}
+Industrial bearing monitoring systems operate under distinct time constraints at each level:
+
+\begin{itemize}
+    \item \textbf{Level 1 (Online, Real-Time)}: The monitoring system must analyze vibration signals continuously and respond within milliseconds to trigger protective actions (e.g., shutdown). This demands \emph{computationally simple features} that can be computed on streaming data. Entropy features (sample entropy, permutation entropy) satisfy this constraint: they are fast to compute and require no spectral transformation.
+
+    \item \textbf{Level 2 (Offline, Post-Diagnosis)}: After a fault is detected and the system is safely shut down, maintenance engineers have hours to days to analyze the fault type for repair planning. This allows for \emph{computationally intensive features} such as FFT-based spectral analysis, wavelet decomposition, or envelope spectrum analysis to extract frequency signatures characteristic of specific fault mechanisms.
+\end{itemize}
+
+This system-level separation reinforces the feature-task alignment principle at the architectural level: the real-time constraint of Level 1 naturally selects for simple, fast features (entropy), while the offline flexibility of Level 2 allows complex frequency-domain analysis. Any practical industrial implementation must respect these constraints, making feature-task alignment not merely an algorithmic optimization but a system design requirement.
 
 \section{Experimental Results}
 
@@ -231,11 +244,11 @@ This validates the \textbf{feature-task alignment principle}: optimal features a
 Our findings motivate an \emph{adaptive feature selection} strategy:
 
 \begin{itemize}
-    \item \textbf{Level 1 (Safety)}: Use entropy features $\rightarrow$ Guaranteed fault detection
-    \item \textbf{Level 2 (Diagnosis)}: Use frequency-domain features $\rightarrow$ Accurate fault typing
+    \item \textbf{Level 1 (Real-Time Safety)}: Use entropy features $\rightarrow$ Guaranteed fault detection with low computational cost
+    \item \textbf{Level 2 (Offline Diagnosis)}: Use frequency-domain features $\rightarrow$ Accurate fault typing with complex analysis
 \end{itemize}
 
-This principle extends beyond entropy features: \textbf{different classification tasks benefit from different feature representations}. The appropriate feature set depends on the physical quantity relevant to the task.
+This principle extends beyond entropy features: \textbf{different classification tasks benefit from different feature representations}, and the system-level real-time/offline constraint provides an additional rationale for this separation. The appropriate feature set depends on both the physical quantity relevant to the task and the computational constraints of the system level at which the task operates.
 
 \section{Conclusion}
 
